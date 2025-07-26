@@ -1,0 +1,76 @@
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/MetricsSuite.scala:16:29 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m16 |[0m      .map(z => math.hypot(z.real, z.imag))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                           ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mvalue real is not a member of Double, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/MetricsSuite.scala:16:37 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m16 |[0m      .map(z => math.hypot(z.real, z.imag))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                   ^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mvalue imag is not a member of Double, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/MetricsSuite.scala:21:13 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m21 |[0m      model: [35mReservoir[0m,[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m             ^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m             Not found: type Reservoir[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/MetricsSuite.scala:27:23 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m27 |[0m    [33mval[0m [36minput[0m = Vector.fill(seqLen)(rng.between(-[31m0.8[0m, [31m0.8[0m))[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                ^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mvalue fill is not a member of object breeze.linalg.Vector, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E006] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/MetricsSuite.scala:33:18 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m33 |[0m    [33mval[0m [36mreadout[0m = RidgeReadout().fit(S([31m0[0m until seqLen - kMax, ::), Y)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                  ^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                  Not found: RidgeReadout[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m longer explanation available when compiling with `-explain`[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/MetricsSuite.scala:38:27 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m38 |[0m      [33mval[0m [36mr[0m = breeze.stats.corrcoef(yt, yp)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m              ^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mvalue corrcoef is not a member of breeze.stats, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/ObservablesSuite.scala:8:21 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m8 |[0m    [33mval[0m [36msr[0m = Metrics.effectiveSpectralRadius(raw, [31m1.0[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m  |[0m             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0mvalue effectiveSpectralRadius is not a member of object rcflow.core.Metrics, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m  |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/ObservablesSuite.scala:10:22 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m10 |[0m    [33mval[0m [36mrho[0m = Metrics.effectiveSpectralRadius(W, [31m1.0[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mvalue effectiveSpectralRadius is not a member of object rcflow.core.Metrics, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/test/scala/ObservablesSuite.scala:16:21 [0m[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m16 |[0m    [33mval[0m [36mmc[0m = Metrics.memoryCapacity(res, kMax = [31m50[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m             ^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mvalue memoryCapacity is not a member of object rcflow.core.Metrics, but could be made available as an extension method.[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0mThe following import might make progress towards fixing the problem:[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m  import munit.Clue.generate[0m
+[0m[[0m[31merror[0m] [0m[0m[31m   |[0m[0m
+[0m[[0m[31merror[0m] [0m[0m9 errors found[0m

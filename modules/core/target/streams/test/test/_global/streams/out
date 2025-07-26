@@ -1,0 +1,19 @@
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ConcatDelaySuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ReservoirMultiSuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(OnlineSuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(MetricsSuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ObservablesSuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(RidgeReadoutSuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mRunning TaskDef(ReservoirSuite, CustomFingerprint{suite='munit.Suite'}, false, [SuiteSelector])[0m
+[0m[[0m[0mdebug[0m] [0m[0mSummary for munit not available.[0m
+[0m[[0m[31merror[0m] [0m[0mFailed: Total 13, Failed 1, Errors 0, Passed 12[0m
+[0m[[0m[0mdebug[0m] [0m[0mPassed tests:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ReservoirSuite[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ReservoirMultiSuite[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ObservablesSuite[0m
+[0m[[0m[0mdebug[0m] [0m[0m	MetricsSuite[0m
+[0m[[0m[0mdebug[0m] [0m[0m	RidgeReadoutSuite[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ConcatDelaySuite[0m
+[0m[[0m[31merror[0m] [0m[0mFailed tests:[0m
+[0m[[0m[31merror[0m] [0m[0m	OnlineSuite[0m
+[0m[[0m[31merror[0m] [0m[0m(core / Test / [31mtest[0m) sbt.TestsFailedException: Tests unsuccessful[0m
