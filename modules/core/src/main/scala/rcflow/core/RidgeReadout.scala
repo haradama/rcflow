@@ -1,6 +1,6 @@
 package rcflow.core
 
-import breeze.linalg.*
+import breeze.linalg._
 import rcflow.core.graph.Node
 
 final class RidgeReadout(
@@ -41,10 +41,12 @@ final class RidgeReadout(
   override def reset(): Unit = ()
 
   def weights: DenseMatrix[Double] = Wout.copy // defensive copy
-  def weights_=(w: DenseMatrix[Double]): Unit =
+
+  def weights_=(w: DenseMatrix[Double]): Unit = {
     require(
       w.rows == inDim && w.cols == outDim,
       s"shape mismatch: expected $inDim x $outDim, got ${w.rows} x ${w.cols}"
     )
     Wout = w.copy
+  }
 }

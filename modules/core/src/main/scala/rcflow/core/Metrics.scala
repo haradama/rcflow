@@ -1,12 +1,15 @@
 package rcflow.core
 
-import breeze.linalg.*
+import breeze.linalg._
 import breeze.math.Complex
 import scala.util.Random
 
 object Metrics {
   def mse(y: DenseMatrix[Double], yHat: DenseMatrix[Double]): Double = meanSq(y - yHat)
-  def rmse(y: DenseMatrix[Double], yHat: DenseMatrix[Double]): Double = math.sqrt(mse(y, yHat))
+
+  def rmse(y: DenseMatrix[Double], yHat: DenseMatrix[Double]): Double =
+    math.sqrt(mse(y, yHat))
+
   def nrmse(y: DenseMatrix[Double], yHat: DenseMatrix[Double]): Double = {
     val span = maxVal(y) - minVal(y)
     rmse(y, yHat) / (if (span < 1e-12) 1e-12 else span)
@@ -40,7 +43,7 @@ object Metrics {
   ): Double = {
 
     val rng = new Random(seed)
-    val inputs = scala.Vector.fill(seqLen)(rng.between(-0.8, 0.8))
+    val inputs = scala.collection.immutable.Vector.fill(seqLen)(rng.between(-0.8, 0.8))
 
     reservoir.reset()
     val Sfull = reservoir.run(inputs)
@@ -59,6 +62,7 @@ object Metrics {
       }
       col += effLen
     }
+
     val Y = new DenseMatrix(effLen, kMax, yArr)
 
     val readout = new RidgeReadout(inDim = S.cols, outDim = Y.cols).fit(S, Y)
@@ -75,8 +79,12 @@ object Metrics {
   }
 
   private def vnorm(v: DenseVector[Double]): Double = math.sqrt(sum(v *:* v))
-  private def meanVec(v: DenseVector[Double]) = sum(v) / v.length.toDouble
-  private def meanSq(m: DenseMatrix[Double]) = sum(m *:* m) / m.size.toDouble
-  private def maxVal(m: DenseMatrix[Double]) = breeze.linalg.max(m)
-  private def minVal(m: DenseMatrix[Double]) = breeze.linalg.min(m)
+
+  private def meanVec(v: DenseVector[Double]): Double = sum(v) / v.length.toDouble
+
+  private def meanSq(m: DenseMatrix[Double]): Double = sum(m *:* m) / m.size.toDouble
+
+  private def maxVal(m: DenseMatrix[Double]): Double = breeze.linalg.max(m)
+
+  private def minVal(m: DenseMatrix[Double]): Double = breeze.linalg.min(m)
 }

@@ -1,16 +1,16 @@
 package rcflow.quant.impl
 
-import rcflow.quant.api.*
-import rcflow.quant.api.RoundClip.*
-import RoundClip.RoundingMode
+import rcflow.quant.api._
+import rcflow.quant.api.RoundClip._
+import rcflow.quant.api.RoundClip.RoundingMode
 
-import scala.math.{pow}
+import scala.math.pow
 
 final class FixedPointQuantizer(
     totalBits: Int,
     fracBits: Int,
     rounding: RoundingMode = RoundingMode.Nearest
-) extends Quantizer[Double]:
+) extends Quantizer[Double] {
 
   require(totalBits >= 2 && totalBits <= 31, "totalBits must be 2‑31 (fits into signed Int)")
   require(fracBits >= 0 && fracBits < totalBits, "fracBits must be < totalBits")
@@ -23,13 +23,18 @@ final class FixedPointQuantizer(
 
   override val format: QFormat = QFormat.Fixed(totalBits, fracBits)
 
-  override def quantize(x: Double): Int =
+  override def quantize(x: Double): Int = {
     val raw = round(x * scale, rounding)
     val clipRaw = clip(raw, minRaw, maxRaw)
     clipRaw.toInt
+  }
 
-  override def dequantize(b: Int): Double = b.toDouble / scale
+  override def dequantize(b: Int): Double = {
+    b.toDouble / scale
+  }
 
   private val minReal = minRaw.toDouble / scale
   private val maxReal = maxRaw.toDouble / scale
+
   override val range: (Double, Double) = (minReal, maxReal)
+}

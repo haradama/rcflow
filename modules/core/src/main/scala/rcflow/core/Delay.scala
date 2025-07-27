@@ -13,8 +13,9 @@ final class Delay(delay: Int, dim: Int) extends Node {
   private var lastOut = DenseVector.zeros[Double](dim)
 
   override def forward(x: DenseVector[Double]): DenseVector[Double] = {
-    if delay == 0 then x
-    else {
+    if (delay == 0) {
+      x
+    } else {
       buf.enqueue(x)
       lastOut = buf.dequeue()
       lastOut
@@ -26,5 +27,6 @@ final class Delay(delay: Int, dim: Int) extends Node {
     buf ++= Seq.fill(delay)(DenseVector.zeros[Double](dim))
     lastOut := 0.0
   }
+
   override val outDim: Int = dim
 }

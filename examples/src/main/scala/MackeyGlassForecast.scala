@@ -1,17 +1,16 @@
 package rcflow.examples
 
-import rcflow.core.*
-import rcflow.core.Metrics.{rmse, r2}
-import rcflow.core.graph.Syntax.given
-import rcflow.core.graph.Syntax.*
-import rcflow.dataset.MackeyGlass
-import breeze.linalg.*
 import scala.language.implicitConversions
+import breeze.linalg._
+import breeze.stats.variance
+import rcflow.core._
+import rcflow.core.Metrics.{rmse, r2}
+import rcflow.dataset.MackeyGlass
 
 object MackeyGlassForecast {
 
   def mackeyGlass(
-      τ: Int = 30,
+      tau: Int = 30,
       nSteps: Int = 3000,
       h: Double = 0.1,
       beta: Double = 0.2,
@@ -21,7 +20,7 @@ object MackeyGlassForecast {
   ): DenseVector[Double] = {
     MackeyGlass.generate(
       nTimesteps = nSteps,
-      tau = τ,
+      tau = tau,
       a = beta,
       b = gamma,
       n = n.toDouble,
@@ -61,18 +60,19 @@ object MackeyGlassForecast {
     val (xTrain, xTest, yTrain, yTest) = toForecast(series)
     val warmup = 100
 
-    val reservoir = Reservoir(100, spectralRadius = 0.95, inputScale = 0.3, seed = 42)
+    val reservoir = new Reservoir(size = 100, spectralRadius = 0.95, inputScale = 0.3, seed = 42L)
     val readout = new RidgeReadout(inDim = 100, outDim = 1, ridge = 1e-4)
 
     reservoir.reset()
     val statesAll = reservoir.run(xTrain)
     val trainStates = statesAll(warmup until statesAll.rows, ::).toDenseMatrix
     val trainTargets =
-      DenseMatrix(yTrain.slice(warmup, yTrain.length)).reshape(yTrain.length - warmup, 1)
+      DenseVector(yTrain.slice(warmup, yTrain.length)).toDenseMatrix
+        .reshape(yTrain.length - warmup, 1)
 
-    println(f"Train states shape: ${trainStates.rows} x ${trainStates.cols}")
-    println(f"Train targets shape: ${trainTargets.rows} x ${trainTargets.cols}")
-    println(f"Train targets variance: ${breeze.stats.variance(trainTargets.toDenseVector)}")
+    println(f"Train states shape: ${trainStates.rows}%d x ${trainStates.cols}%d")
+    println(f"Train targets shape: ${trainTargets.rows}%d x ${trainTargets.cols}%d")
+    println(f"Train targets variance: ${variance(trainTargets.toDenseVector)}%.6f")
 
     readout.fit(trainStates, trainTargets)
     val model = TrainedModel(reservoir, readout)
@@ -80,15 +80,14 @@ object MackeyGlassForecast {
     reservoir.reset()
     val pred = model.predict(xTest)
 
-    println(f"Test data size: ${yTest.length}")
-    println(f"Prediction shape: ${pred.rows} x ${pred.cols}")
+    println(f"Test data size: ${yTest.length}%d")
+    println(f"Prediction shape: ${pred.rows}%d x ${pred.cols}%d")
 
-    val yTestMat = DenseMatrix(yTest).reshape(yTest.length, 1)
-
-    println(f"yTestMat shape: ${yTestMat.rows} x ${yTestMat.cols}")
-    println(f"yTestMat variance: ${breeze.stats.variance(yTestMat.toDenseVector)}")
-    println(f"yTestMat min/max: ${breeze.linalg.min(yTestMat)} ~ ${breeze.linalg.max(yTestMat)}")
-    println(f"pred min/max: ${breeze.linalg.min(pred)} ~ ${breeze.linalg.max(pred)}")
+    val yTestMat = DenseVector(yTest).toDenseMatrix.reshape(yTest.length, 1)
+    println(f"yTestMat shape: ${yTestMat.rows}%d x ${yTestMat.cols}%d")
+    println(f"yTestMat variance: ${variance(yTestMat.toDenseVector)}%.6f")
+    println(f"yTestMat min/max: ${min(yTestMat)}%.6e ~ ${max(yTestMat)}%.6e")
+    println(f"pred min/max: ${min(pred)}%.6e ~ ${max(pred)}%.6e")
 
     val rmseValue = rmse(yTestMat, pred)
     val r2Value = r2(yTestMat, pred)

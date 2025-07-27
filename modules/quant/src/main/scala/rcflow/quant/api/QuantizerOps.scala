@@ -1,66 +1,83 @@
 package rcflow.quant.api
 
 import breeze.linalg.{DenseMatrix, DenseVector}
-
 import rcflow.core.{Reservoir, RidgeReadout}
+import rcflow.quant.impl.BFPBlockQuantizer
+import rcflow.core.Metrics.effectiveSpectralRadius
 
 import scala.reflect.ClassTag
 
-import rcflow.quant.impl.BFPBlockQuantizer
-
-import rcflow.core.Metrics.effectiveSpectralRadius
-
 object QuantizerOps {
 
-  extension (q: Quantizer[Double])
+  /** Quantizer[Double] の型メンバ B を QB として取り出し、サポートする拡張メソッドを定義 */
+  implicit class QuantizerVecOps[QB](val q: Quantizer[Double] { type B = QB })(implicit
+      ct: ClassTag[QB]
+  ) {
 
-    def quantizeVec(vec: DenseVector[Double])(using ClassTag[q.B]): Array[q.B] =
-      val out = Array.ofDim[q.B](vec.length)
+    def quantizeVec(vec: DenseVector[Double]): Array[QB] = {
+      val out = Array.ofDim[QB](vec.length)
       var i = 0
-      while i < vec.length do
+      while (i < vec.length) {
         out(i) = q.quantize(vec(i))
         i += 1
+      }
       out
+    }
 
-    def dequantizeVec(data: Array[q.B]): DenseVector[Double] =
+    def dequantizeVec(data: Array[QB]): DenseVector[Double] = {
       val arr = Array.ofDim[Double](data.length)
       var i = 0
-      while i < data.length do
+      while (i < data.length) {
         arr(i) = q.dequantize(data(i))
         i += 1
+      }
       DenseVector(arr)
+    }
 
-    def quantizeMat(mat: DenseMatrix[Double])(using ClassTag[q.B]): Array[q.B] =
-      val rows = mat.rows; val cols = mat.cols
-      val out = Array.ofDim[q.B](rows * cols)
+    def quantizeMat(mat: DenseMatrix[Double]): Array[QB] = {
+      val rows = mat.rows
+      val cols = mat.cols
+      val out = Array.ofDim[QB](rows * cols)
       var idx = 0
       var c = 0
-      while c < cols do
+      while (c < cols) {
         var r = 0
-        while r < rows do
+        while (r < rows) {
           out(idx) = q.quantize(mat(r, c))
-          r += 1; idx += 1
+          r += 1
+          idx += 1
+        }
         c += 1
+      }
       out
+    }
 
-    def dequantizeMat(data: Array[q.B], rows: Int, cols: Int): DenseMatrix[Double] =
+    def dequantizeMat(data: Array[QB], rows: Int, cols: Int): DenseMatrix[Double] = {
       require(data.length == rows * cols, s"length ${data.length} ≠ rows*cols ${rows * cols}")
       val mat = DenseMatrix.zeros[Double](rows, cols)
-      var idx = 0; var c = 0
-      while c < cols do
+      var idx = 0
+      var c = 0
+      while (c < cols) {
         var r = 0
-        while r < rows do
+        while (r < rows) {
           mat(r, c) = q.dequantize(data(idx))
-          r += 1; idx += 1
+          r += 1
+          idx += 1
+        }
         c += 1
+      }
       mat
+    }
+  }
 
+  /** Reservoir 重みの正規化 */
   def normalizeSpectralRadius(
-      W: breeze.linalg.DenseMatrix[Double],
+      W: DenseMatrix[Double],
       target: Double = 0.95
-  ): breeze.linalg.DenseMatrix[Double] =
+  ): DenseMatrix[Double] = {
     val rho = effectiveSpectralRadius(W)
-    if rho < 1e-12 then W else W * (target / rho)
+    if (rho < 1e-12) W else W * (target / rho)
+  }
 }
 
 final case class QReservoir[W, I](
@@ -69,23 +86,25 @@ final case class QReservoir[W, I](
     wInFormat: QFormat,
     wData: Array[W], // column‑major size×size
     wInData: Array[I] // length = size
-)(using ClassTag[W], ClassTag[I])
+)(implicit val ctW: ClassTag[W], val ctI: ClassTag[I])
 
 final case class QReadout[B](
     inDim: Int,
     outDim: Int,
     format: QFormat,
     wData: Array[B] // column‑major inDim×outDim
-)(using ClassTag[B])
+)(implicit val ctB: ClassTag[B])
 
-object QFlow:
+object QFlow {
 
-  import QuantizerOps.*
+  import QuantizerOps._
+
   def quantize[BW, BI](
-      res: rcflow.core.Reservoir,
+      res: Reservoir,
       qW: Quantizer[Double] { type B = BW },
       qIn: Quantizer[Double] { type B = BI }
-  )(using ClassTag[BW], ClassTag[BI]): QReservoir[BW, BI] =
+  )(implicit ctW: ClassTag[BW], ctI: ClassTag[BI]): QReservoir[BW, BI] = {
+
     val wField = res.getClass.getDeclaredField("w")
     wField.setAccessible(true)
     val wMat = wField.get(res).asInstanceOf[DenseMatrix[Double]]
@@ -94,8 +113,8 @@ object QFlow:
     wInField.setAccessible(true)
     val wInVec = wInField.get(res).asInstanceOf[DenseVector[Double]]
 
-    val wArr = qW.quantizeMat(wMat)
-    val wInArr = qIn.quantizeVec(wInVec)
+    val wArr = new QuantizerVecOps[BW](qW).quantizeMat(wMat)
+    val wInArr = new QuantizerVecOps[BI](qIn).quantizeVec(wInVec)
 
     QReservoir(
       size = res.size,
@@ -104,26 +123,32 @@ object QFlow:
       wData = wArr,
       wInData = wInArr
     )
+  }
 
   def quantize[BB](
-      rr: rcflow.core.RidgeReadout,
+      rr: RidgeReadout,
       q: Quantizer[Double] { type B = BB }
-  )(using ClassTag[BB]): QReadout[BB] =
+  )(implicit ctB: ClassTag[BB]): QReadout[BB] = {
+
     val wField = rr.getClass.getDeclaredField("Wout")
     wField.setAccessible(true)
     val wMat = wField.get(rr).asInstanceOf[DenseMatrix[Double]]
+
+    val wArr = new QuantizerVecOps[BB](q).quantizeMat(wMat)
 
     QReadout(
       inDim = rr.inDim,
       outDim = rr.outDim,
       format = q.format,
-      wData = q.quantizeMat(wMat)
+      wData = wArr
     )
+  }
 
-  extension (bfp: BFPBlockQuantizer)
-
+  implicit class BFPBlockOps(val bfp: BFPBlockQuantizer) extends AnyVal {
     def quantize(vec: DenseVector[Double]): (Array[Int], Array[Int]) =
       bfp.quantize(vec)
 
     def dequantize(exps: Array[Int], mants: Array[Int]): DenseVector[Double] =
       bfp.dequantize(exps, mants)
+  }
+}

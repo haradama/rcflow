@@ -1,16 +1,24 @@
 package rcflow.examples
 
-import rcflow.core._
 import breeze.linalg._
+import rcflow.core._
 
-object LinearRegression extends App {
+object LinearRegression {
 
-  val xs = (0 to 100).map(_.toDouble)
-  val ys = DenseVector(xs.map(_ * 4.5 + 2.0).toArray).toDenseMatrix.t
+  def main(args: Array[String]): Unit = {
+    val xs: Seq[Double] = (0 to 100).map(_.toDouble)
+    val ys: DenseMatrix[Double] =
+      DenseVector(xs.map(x => 4.5 * x + 2.0).toArray).toDenseMatrix.t
 
-  val res = Reservoir(size = 64, spectralRadius = 0.2, inputScale = 0.2, seed = 2024)
-  val model = Trainer.fit(res, xs, ys)
+    val res = new Reservoir(
+      size = 64,
+      spectralRadius = 0.2,
+      inputScale = 0.2,
+      seed = 2024L
+    )
+    val model = Trainer.fit(res, xs, ys)
 
-  val pred = model.predict(xs)
-  println(s"NRMSE = ${Metrics.nrmse(ys, pred)}")
+    val pred: DenseMatrix[Double] = model.predict(xs)
+    println(s"NRMSE = ${Metrics.nrmse(ys, pred)}")
+  }
 }

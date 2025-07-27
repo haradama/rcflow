@@ -1,8 +1,8 @@
 import Dependencies._
 
-ThisBuild / organization := "com.example"
-ThisBuild / version      := "0.1.0-SNAPSHOT"
-ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / version      := "0.1.0"
+ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / organization := "%ORGANIZATION%"
 
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked"),
@@ -40,7 +40,7 @@ lazy val chisel = (project in file("modules/chisel"))
   .settings(commonSettings)
   .settings(
     name          := "rcflow-fpga",
-    scalaVersion  := "2.13.12",
+    scalaVersion := "2.13.16",
     libraryDependencies += "edu.berkeley.cs" %% "chisel3" % "3.6.0"
   )
   .dependsOn(core, quant)

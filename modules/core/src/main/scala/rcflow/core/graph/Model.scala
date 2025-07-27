@@ -7,11 +7,17 @@ final class Model private (
     private val chain: ListBuffer[Node]
 ) {
 
-  def step(x: Double): DenseVector[Double] =
-    chain.foldLeft(DenseVector(x))((inp, n) => n.forward(inp))
+  def step(x: Double): DenseVector[Double] = {
+    chain.foldLeft(DenseVector(x)) { (inp, n) =>
+      n.forward(inp)
+    }
+  }
 
-  def run(xs: Iterable[Double]): DenseVector[Double] =
-    xs.foldLeft(DenseVector(0.0))((_, v) => step(v))
+  def run(xs: Iterable[Double]): DenseVector[Double] = {
+    xs.foldLeft(DenseVector(0.0)) { (_, v) =>
+      step(v)
+    }
+  }
 
   def nodes: Seq[Node] = chain.toSeq
 }
