@@ -26,10 +26,15 @@ lazy val dataset = (project in file("modules/dataset"))
   )
   .dependsOn(core)
 
-lazy val quant = (project in file("modules/quant"))
-  .settings(commonSettings)
-  .settings(name := "rcflow-quant")
-  .dependsOn(core)
+lazy val quant = project
+  .in(file("modules/quant"))
+  .settings(
+    name         := "rcflow-quant",
+    libraryDependencies ++= Seq(
+      "org.scalanlp" %% "breeze" % "2.1.0",
+      "org.scalameta" %% "munit"   % "1.0.0" % Test
+    )
+  )
 
 lazy val chisel = (project in file("modules/chisel"))
   .settings(commonSettings)
@@ -50,7 +55,7 @@ lazy val bench = (project in file("modules/bench"))
   .enablePlugins(JmhPlugin)
 
 lazy val root = (project in file("."))
-  .aggregate(core, quant, chisel, bench, dataset, examples)
+  .aggregate(core, quant, chisel, bench, dataset, quant, examples)
   .settings(commonSettings)
   .settings(
     publish / skip := true
@@ -63,3 +68,4 @@ lazy val examples = (project in file("examples"))
     publish / skip := true
   )
   .dependsOn(core, dataset) 
+

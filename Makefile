@@ -3,7 +3,10 @@ SBT ?= sbt
 compile:
 	$(SBT) compile
 
-test:
+reload:
+	$(SBT) reload
+
+test: reload fmt
 	$(SBT) test
 
 run:
