@@ -9,7 +9,6 @@ lazy val commonSettings = Seq(
   testFrameworks += new TestFramework("munit.Framework")
 )
 
-/* ---------- sub-projects ---------- */
 lazy val core = (project in file("modules/core"))
   .settings(commonSettings)
   .settings(
@@ -20,6 +19,13 @@ lazy val core = (project in file("modules/core"))
     )
   )
 
+lazy val dataset = (project in file("modules/dataset"))
+  .settings(commonSettings)
+  .settings(
+    name := "rcflow-dataset"
+  )
+  .dependsOn(core)
+
 lazy val quant = (project in file("modules/quant"))
   .settings(commonSettings)
   .settings(name := "rcflow-quant")
@@ -29,7 +35,7 @@ lazy val chisel = (project in file("modules/chisel"))
   .settings(commonSettings)
   .settings(
     name          := "rcflow-fpga",
-    scalaVersion  := "2.13.12",      // Chisel は 2.13 系
+    scalaVersion  := "2.13.12",
     libraryDependencies += "edu.berkeley.cs" %% "chisel3" % "3.6.0"
   )
   .dependsOn(core, quant)
@@ -41,20 +47,19 @@ lazy val bench = (project in file("modules/bench"))
     libraryDependencies += "org.openjdk.jmh" % "jmh-core" % "1.37"
   )
   .dependsOn(core)
-  .enablePlugins(JmhPlugin)         // sbt-jmh
+  .enablePlugins(JmhPlugin)
 
-/* ---------- aggregate ---------- */
 lazy val root = (project in file("."))
-  .aggregate(core, quant, chisel, bench, examples)
+  .aggregate(core, quant, chisel, bench, dataset, examples)
   .settings(commonSettings)
   .settings(
-    publish / skip := true          // ルートは公開しない
+    publish / skip := true
   )
 
 lazy val examples = (project in file("examples"))
   .settings(commonSettings)
   .settings(
     name           := "rcflow-examples",
-    publish / skip := true                // 公開しない
+    publish / skip := true
   )
-  .dependsOn(core)                         // ライブラリ参照
+  .dependsOn(core, dataset) 

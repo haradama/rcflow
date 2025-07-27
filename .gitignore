@@ -1,4 +1,4 @@
-*/**/target
+**/target/
 
 # Created by https://www.toptal.com/developers/gitignore/api/scala,visualstudiocode,macos,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=scala,visualstudiocode,macos,linux
