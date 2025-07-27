@@ -8,6 +8,8 @@ import scala.reflect.ClassTag
 
 import rcflow.quant.impl.BFPBlockQuantizer
 
+import rcflow.core.Metrics.effectiveSpectralRadius
+
 object QuantizerOps {
 
   extension (q: Quantizer[Double])
@@ -52,6 +54,13 @@ object QuantizerOps {
           r += 1; idx += 1
         c += 1
       mat
+
+  def normalizeSpectralRadius(
+      W: breeze.linalg.DenseMatrix[Double],
+      target: Double = 0.95
+  ): breeze.linalg.DenseMatrix[Double] =
+    val rho = effectiveSpectralRadius(W)
+    if rho < 1e-12 then W else W * (target / rho)
 }
 
 final case class QReservoir[W, I](
@@ -72,8 +81,6 @@ final case class QReadout[B](
 object QFlow:
 
   import QuantizerOps.*
-
-  /** Quantise a trained [[rcflow.core.Reservoir]]. */
   def quantize[BW, BI](
       res: rcflow.core.Reservoir,
       qW: Quantizer[Double] { type B = BW },

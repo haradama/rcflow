@@ -29,3 +29,11 @@ final class AffineQuantizer(
 
   override val range: (Double, Double) =
     (scale * (qMin - zeroPoint), scale * (qMax - zeroPoint))
+
+object AffineQuantizer {
+
+  def fromMaxAbs(bits: Int, maxAbs: Double): AffineQuantizer =
+    require(maxAbs > 0, "maxAbs must be positive")
+    val scale = maxAbs / ((1 << (bits - 1)) - 1)
+    new AffineQuantizer(bits, scale, zeroPoint = 1 << (bits - 1))
+}

@@ -56,3 +56,21 @@ final class Reservoir(
     out
   }
 }
+
+object Reservoir {
+  def fromWeights(
+      w: breeze.linalg.DenseMatrix[Double],
+      wIn: breeze.linalg.DenseVector[Double],
+      sr: Double = 0.95,
+      inSc: Double = 1.0,
+      seed: Long = 0L
+  ): Reservoir =
+    require(w.rows == w.cols, "W must be square")
+    require(w.rows == wIn.length, "wIn length mismatch")
+
+    val r = new Reservoir(w.rows, sr, inSc, seed)
+
+    val wf = r.getClass.getDeclaredField("w"); wf.setAccessible(true); wf.set(r, w)
+    val winF = r.getClass.getDeclaredField("wIn"); winF.setAccessible(true); winF.set(r, wIn)
+    r
+}

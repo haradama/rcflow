@@ -22,3 +22,18 @@ object PerChannelAffine:
       out(i) = q.quantize(vec(i)).asInstanceOf[QB]
       i += 1
     out
+
+  def dequantizeVec(
+      data: Array[Short],
+      scales: Array[Double],
+      zeros: Array[Int],
+      bits: Int
+  ): breeze.linalg.DenseVector[Double] =
+    require(data.length == scales.length && data.length == zeros.length)
+    val out = Array.ofDim[Double](data.length)
+    var i = 0
+    while i < data.length do
+      val q = new AffineQuantizer(bits, scales(i), zeros(i))
+      out(i) = q.dequantize(data(i))
+      i += 1
+    breeze.linalg.DenseVector(out)

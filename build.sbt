@@ -67,5 +67,5 @@ lazy val examples = (project in file("examples"))
     name           := "rcflow-examples",
     publish / skip := true
   )
-  .dependsOn(core, dataset) 
+  .dependsOn(core, dataset, quant)
 

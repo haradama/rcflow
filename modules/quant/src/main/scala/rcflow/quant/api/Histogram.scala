@@ -3,7 +3,6 @@ package rcflow.quant.api
 import breeze.linalg.DenseVector
 import scala.collection.mutable.ArrayBuffer
 
-
 final class HistogramCalibrator(
     val numBins: Int = 2048,
     val symmetric: Boolean = true
