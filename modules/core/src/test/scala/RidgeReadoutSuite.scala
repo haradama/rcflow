@@ -13,7 +13,8 @@ class RidgeReadoutSuite extends FunSuite {
 
     val Y = S * trueW
 
-    val rr = RidgeReadout().fit(S, Y)
+    // ★ コンストラクタに inDim と outDim を渡す
+    val rr = new RidgeReadout(inDim = N, outDim = M).fit(S, Y)
     val pred = rr.predict(S)
 
     val err = Metrics.nrmse(Y, pred)

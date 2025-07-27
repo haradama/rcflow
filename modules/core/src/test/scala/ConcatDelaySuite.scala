@@ -4,6 +4,11 @@ import rcflow.core.graph.Syntax.given
 import breeze.linalg.*
 
 class ConcatDelaySuite extends FunSuite {
+  test("Delay 0 behaves as identity") {
+    val d0 = Delay(0, 1)
+    val out = d0.forward(DenseVector(123.0))
+    assertEqualsDouble(out(0), 123.0, 1e-12)
+  }
 
   test("Delay outputs are shifted by k steps") {
     val d = Delay(delay = 2, dim = 1)

@@ -1,5 +1,4 @@
 import munit.FunSuite
-import rcflow.core._
 import rcflow.core.Metrics._
 import breeze.linalg._
 

@@ -12,7 +12,11 @@ object Trainer {
   ): TrainedModel = {
 
     val states = reservoir.run(inputs)
-    val readout = RidgeReadout(ridge).fit(states, targets)
+    val readout = new RidgeReadout(
+      inDim = states.cols,
+      outDim = targets.cols,
+      ridge = ridge
+    ).fit(states, targets)
     TrainedModel(reservoir, readout)
   }
 }

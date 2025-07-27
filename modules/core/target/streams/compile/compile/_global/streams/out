@@ -1,9 +1,0 @@
-[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/main/scala/rcflow/core/Metrics.scala:25:35 [0m[0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m25 |[0m    evs.data.map([36mc[0m => math.hypot(c.real, c.imag)).max[0m
-[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                 ^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                 value real is not a member of Double[0m
-[0m[[0m[31merror[0m] [0m[0m[31m[31m-- [E008] Not Found Error: /Users/masafumi.harada/workspace/rcflow/modules/core/src/main/scala/rcflow/core/Metrics.scala:25:43 [0m[0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m25 |[0m    evs.data.map([36mc[0m => math.hypot(c.real, c.imag)).max[0m
-[0m[[0m[31merror[0m] [0m[0m[31m[31m   |[0m                                         ^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m   |[0m                                    value imag is not a member of Double[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m

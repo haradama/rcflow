@@ -1,3 +1,5 @@
+package rcflow.core
+
 import breeze.linalg._
 import rcflow.core.graph.Node
 

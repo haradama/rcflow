@@ -1,22 +1,42 @@
 package rcflow.core
 
-import breeze.linalg._
+import breeze.linalg.*
+import rcflow.core.graph.Node
 
-final case class RidgeReadout(
-    ridge: Double = 1e-6,
-    Wout: DenseMatrix[Double] = DenseMatrix.zeros[Double](0, 0)
-) {
+final class RidgeReadout(
+    val inDim: Int,
+    val outDim: Int,
+    val ridge: Double = 1e-6
+) extends Node {
 
-  def fit(states: DenseMatrix[Double], targets: DenseMatrix[Double]): RidgeReadout = {
+  private var Wout = DenseMatrix.zeros[Double](inDim, outDim)
 
-    require(states.rows == targets.rows, s"length mismatch: ${states.rows} vs ${targets.rows}")
-
-    val sT = states.t
-    val idn = DenseMatrix.eye[Double](states.cols)
-    val w = inv(sT * states + idn * ridge) * sT * targets // N×M
-    copy(Wout = w)
+  private def solveSPD(A: DenseMatrix[Double], B: DenseMatrix[Double]): DenseMatrix[Double] = {
+    val L = cholesky(A)
+    val y = L \ B
+    L.t \ y
   }
 
-  def predict(states: DenseMatrix[Double]): DenseMatrix[Double] =
-    states * Wout
+  def fit(states: DenseMatrix[Double], targets: DenseMatrix[Double]): this.type = {
+    require(states.rows == targets.rows, "length mismatch")
+    require(states.cols == inDim, s"inDim mismatch: expected $inDim, got ${states.cols}")
+    require(targets.cols == outDim, s"outDim mismatch: expected $outDim, got ${targets.cols}")
+
+    val sT = states.t
+    val gram = sT * states
+    diag(gram) :+= ridge
+    val rhs = sT * targets
+    this.Wout = solveSPD(gram, rhs)
+    this
+  }
+
+  def forward(x: DenseVector[Double]): DenseVector[Double] = {
+    (Wout.t * x).toDenseVector
+  }
+
+  def predict(states: DenseMatrix[Double]): DenseMatrix[Double] = {
+    states * this.Wout
+  }
+
+  override def reset(): Unit = ()
 }

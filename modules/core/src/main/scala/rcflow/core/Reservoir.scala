@@ -2,7 +2,7 @@ package rcflow.core
 
 import breeze.linalg.*
 import breeze.numerics.tanh
-import scala.util.Random
+import breeze.stats.distributions.{RandBasis, Uniform}
 
 import rcflow.core.graph
 
@@ -13,14 +13,28 @@ final class Reservoir(
     seed: Long = 42L
 ) extends graph.Node {
 
-  private val rng = new Random(seed)
+  private implicit val basis: RandBasis = RandBasis.withSeed(seed.toInt)
 
   private val wIn: DenseVector[Double] =
-    DenseVector.fill(size) { (rng.nextDouble() * 2.0 - 1.0) * inputScale }
+    DenseVector.rand(size, Uniform(-1.0, 1.0)) * inputScale
 
   private val w: DenseMatrix[Double] = {
-    val raw = DenseMatrix.tabulate(size, size) { (_, _) => rng.nextDouble() * 2.0 - 1.0 }
-    raw * (spectralRadius / raw.data.view.map(math.abs).max)
+    var raw = DenseMatrix.rand(size, size, Uniform(-1.0, 1.0))
+
+    val maxAbsVal = raw.data.map(math.abs).max
+    if (maxAbsVal > 1e-12) {
+      raw = raw * (1.0 / maxAbsVal)
+    }
+
+    var v = DenseVector.rand(size, Uniform(0.0, 1.0))
+    var estLambda = 0.0
+    for (_ <- 0 until 10) {
+      val v2 = raw * v
+      estLambda = math.sqrt(v2 dot v2)
+      v = v2 /:/ (estLambda + 1e-12)
+    }
+
+    raw * (spectralRadius / (estLambda + 1e-12))
   }
 
   private var state: DenseVector[Double] = DenseVector.zeros[Double](size)
