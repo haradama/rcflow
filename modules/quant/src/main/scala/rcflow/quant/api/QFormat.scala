@@ -19,3 +19,8 @@ object QFormat:
   case class BFP(block: Int, expBits: Int, manBits: Int) extends QFormat:
     require(block > 0 && expBits > 0 && manBits > 0)
     val width = 1 + expBits + manBits
+
+  case class Affine(bits: Int, scale: Double, zeroPoint: Int) extends QFormat:
+    require(bits >= 2 && bits <= 16)
+    require(scale > 0)
+    val width: Int = bits

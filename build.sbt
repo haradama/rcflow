@@ -26,8 +26,7 @@ lazy val dataset = (project in file("modules/dataset"))
   )
   .dependsOn(core)
 
-lazy val quant = project
-  .in(file("modules/quant"))
+lazy val quant = (project in file("modules/quant"))
   .settings(
     name         := "rcflow-quant",
     libraryDependencies ++= Seq(
@@ -35,6 +34,7 @@ lazy val quant = project
       "org.scalameta" %% "munit"   % "1.0.0" % Test
     )
   )
+  .dependsOn(core) 
 
 lazy val chisel = (project in file("modules/chisel"))
   .settings(commonSettings)

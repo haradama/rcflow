@@ -21,7 +21,7 @@ final class Po2Quantizer(expBits: Int) extends Quantizer[Double]:
     (s, e)
 
   def quantize(x: Double): Byte =
-    if x == 0.0 then pack(0, 0)
+    if x == 0.0 then pack(0, (1 << expBits) - 1)
     else
       val sign = if x < 0 then 1 else 0
       val abs = math.abs(x)
@@ -30,8 +30,10 @@ final class Po2Quantizer(expBits: Int) extends Quantizer[Double]:
 
   def dequantize(b: Byte): Double =
     val (s, e) = unpack(b)
-    val k = (e + kMin)
-    val v = math.pow(2.0, k.toDouble)
-    if s == 1 then -v else v
+    if e == ((1 << expBits) - 1) then 0.0
+    else
+      val k = (e + kMin)
+      val v = math.pow(2.0, k.toDouble)
+      if s == 1 then -v else v
 
   override val range = (-math.pow(2.0, kMax.toDouble), math.pow(2.0, kMax.toDouble))

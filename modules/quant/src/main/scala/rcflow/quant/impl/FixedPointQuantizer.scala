@@ -1,30 +1,35 @@
 package rcflow.quant.impl
 
 import rcflow.quant.api.*
-import scala.math.{pow, round}
+import rcflow.quant.api.RoundClip.*
+import RoundClip.RoundingMode
 
-final class FixedPointQuantizer(totalBits: Int, fracBits: Int) extends Quantizer[Double]:
+import scala.math.{pow}
 
-  require(totalBits <= 32, "supports up to 32-bit storage")
+final class FixedPointQuantizer(
+    totalBits: Int,
+    fracBits: Int,
+    rounding: RoundingMode = RoundingMode.Nearest
+) extends Quantizer[Double]:
+
+  require(totalBits >= 2 && totalBits <= 31, "totalBits must be 2‑31 (fits into signed Int)")
+  require(fracBits >= 0 && fracBits < totalBits, "fracBits must be < totalBits")
 
   override type B = Int
-  private val scale = 1 << fracBits
-  private val minValR = -(1 << (totalBits - 1))
-  private val maxValR = (1 << (totalBits - 1)) - 1
+
+  private val scale: Long = 1L << fracBits
+  private val minRaw: Long = -(1L << (totalBits - 1))
+  private val maxRaw: Long = (1L << (totalBits - 1)) - 1
 
   override val format: QFormat = QFormat.Fixed(totalBits, fracBits)
 
-  inline private def clip(raw: Long): Int =
-    if raw < minValR then minValR
-    else if raw > maxValR then maxValR
-    else raw.toInt
-
   override def quantize(x: Double): Int =
-    val q = round(x * scale).toLong
-    clip(q)
+    val raw = round(x * scale, rounding)
+    val clipRaw = clip(raw, minRaw, maxRaw)
+    clipRaw.toInt
 
   override def dequantize(b: Int): Double = b.toDouble / scale
 
-  private val minReal = minValR.toDouble / scale
-  private val maxReal = maxValR.toDouble / scale
+  private val minReal = minRaw.toDouble / scale
+  private val maxReal = maxRaw.toDouble / scale
   override val range: (Double, Double) = (minReal, maxReal)
