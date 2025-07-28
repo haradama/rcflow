@@ -1,8 +1,10 @@
 import Dependencies._
 
 ThisBuild / version      := "0.1.0"
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.14"
 ThisBuild / organization := "%ORGANIZATION%"
+
+val chiselVersion = "6.5.0"
 
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked"),
@@ -27,23 +29,37 @@ lazy val dataset = (project in file("modules/dataset"))
   .dependsOn(core)
 
 lazy val quant = (project in file("modules/quant"))
+  .settings(commonSettings)
   .settings(
-    name         := "rcflow-quant",
+    name := "rcflow-quant",
     libraryDependencies ++= Seq(
       "org.scalanlp" %% "breeze" % "2.1.0",
-      "org.scalameta" %% "munit"   % "1.0.0" % Test
+      "org.scalameta" %% "munit" % "1.0.0" % Test
     )
   )
   .dependsOn(core) 
 
-lazy val chisel = (project in file("modules/chisel"))
+lazy val fixedpoint = RootProject(file("external/fixedpoint"))
+
+lazy val chisel = project.in(file("modules/chisel"))
+  .dependsOn(core, quant, fixedpoint)
   .settings(commonSettings)
   .settings(
-    name          := "rcflow-fpga",
-    scalaVersion := "2.13.16",
-    libraryDependencies += "edu.berkeley.cs" %% "chisel3" % "3.6.0"
+    name := "rcflow-chisel",
+    libraryDependencies ++= Seq(
+      "org.chipsalliance"   %% "chisel"       % chiselVersion,
+      "org.scalatest"     %% "scalatest"    % "3.2.19" % Test,
+    ),
+    addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % chiselVersion cross CrossVersion.full),
+    scalacOptions ++= Seq(
+      "-language:reflectiveCalls",
+      "-deprecation",
+      "-feature",
+      "-Xcheckinit",
+      "-Ymacro-annotations"
+    )
   )
-  .dependsOn(core, quant)
+
 
 lazy val bench = (project in file("modules/bench"))
   .settings(commonSettings)
@@ -55,7 +71,7 @@ lazy val bench = (project in file("modules/bench"))
   .enablePlugins(JmhPlugin)
 
 lazy val root = (project in file("."))
-  .aggregate(core, quant, chisel, bench, dataset, quant, examples)
+  .aggregate(core, quant, chisel, bench, dataset, examples)
   .settings(commonSettings)
   .settings(
     publish / skip := true
@@ -68,4 +84,3 @@ lazy val examples = (project in file("examples"))
     publish / skip := true
   )
   .dependsOn(core, dataset, quant)
-
