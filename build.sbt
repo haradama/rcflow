@@ -1,4 +1,4 @@
-import Dependencies._
+
 
 ThisBuild / version      := "0.1.0"
 ThisBuild / scalaVersion := "2.13.14"
@@ -39,7 +39,13 @@ lazy val quant = (project in file("modules/quant"))
   )
   .dependsOn(core) 
 
-lazy val fixedpoint = RootProject(file("external/fixedpoint"))
+lazy val fixedpoint = (project in file("external/fixedpoint"))
+  .settings(
+    name := "fixedpoint",
+    libraryDependencies ++= Seq(
+      "org.chipsalliance"   %% "chisel"       % chiselVersion % Provided
+    )
+  )
 
 lazy val chisel = project.in(file("modules/chisel"))
   .dependsOn(core, quant, fixedpoint)
